@@ -1,8 +1,8 @@
 import { registerRootComponent } from 'expo';
-// Import your actual screen
-import ApiTestScreen from './src/screens/ApiTestScreen';
+// Change this import to point to your new SwipeScreen
+import SwipeScreen from './src/screens/SwipeScreen';
 
-// Register the screen as the root component
-registerRootComponent(ApiTestScreen);
+// Register the SwipeScreen as the root
+registerRootComponent(SwipeScreen);
 
-export default ApiTestScreen;
+export default SwipeScreen;
