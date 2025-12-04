@@ -1,6 +1,9 @@
 GrubFinder
 The "Tinder for Food" App
 
+TUNNEL TESTING COMMAND:
+npx expo start --clear --tunnel 
+
 Overview
 FoodSwipe is a mobile application designed to solve the "What do I want to eat?" dilemma. It presents nearby restaurants in a swipeable card deck. Users can swipe right to "Like" or left to "Pass." When a user decides on a meal, the app uses deep linking to instantly open that restaurant in delivery apps (Uber Eats/DoorDash) to complete the order.
 
@@ -13,7 +16,7 @@ Direct Ordering: No middle-man menus. Clicking "Order" deep-links directly to th
 
 Cost Efficient: Optimized API requests designed to stay within Google's free-tier credits.
 
-🛠 Tech Stack
+Tech Stack
 Frontend: [React Native OR Flutter] (We will update this line once you choose)
 
 Data Source: Google Places API (New)
