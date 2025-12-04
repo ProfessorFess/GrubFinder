@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, ActivityIndicator, SafeAreaView } from 'react-native';
+import { Entypo } from '@expo/vector-icons';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
 import { fetchRestaurants } from '../api/googlePlaces';
 
@@ -9,6 +10,7 @@ const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY;
 export default function SwipeScreen() {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
+  const swiperRef = useRef(null);
 
   useEffect(() => {
     loadData();
@@ -61,21 +63,64 @@ export default function SwipeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.swiperContainer}>
-        {restaurants.length > 0 ? (
-          <Swiper
-            cards={restaurants}
-            renderCard={renderCard}
-            onSwipedRight={(cardIndex) => console.log('YUM:', restaurants[cardIndex].displayName.text)}
-            onSwipedLeft={(cardIndex) => console.log('PASS:', restaurants[cardIndex].displayName.text)}
-            backgroundColor={'transparent'}
-            stackSize={3}
-            cardIndex={0}
-            animateCardOpacity
-            verticalSwipe={false} // Disable vertical swipe for now
-          />
-        ) : (
-          <Text>No restaurants found nearby.</Text>
+      <View style={styles.contentWrapper}>
+        <View style={styles.swiperContainer}>
+          {restaurants.length > 0 ? (
+            <Swiper
+              ref={swiperRef}
+              cards={restaurants}
+              renderCard={renderCard}
+              onSwipedRight={(cardIndex) => console.log('YUM:', restaurants[cardIndex].displayName.text)}
+              onSwipedLeft={(cardIndex) => console.log('PASS:', restaurants[cardIndex].displayName.text)}
+              backgroundColor={'transparent'}
+              stackSize={3}
+              cardIndex={0}
+              animateCardOpacity
+              verticalSwipe={false} // Disable vertical swipe for now
+              disableBottomSwipe={true}
+              disableTopSwipe={true}
+            />
+          ) : (
+            <Text>No restaurants found nearby.</Text>
+          )}
+        </View>
+        
+        {restaurants.length > 0 && (
+          <View style={styles.buttonsContainer}>
+            <Pressable 
+              style={({ pressed }) => [
+                styles.button,
+                styles.passButton,
+                pressed && { opacity: 0.7 }
+              ]}
+              onPress={() => {
+                console.log('Pass button pressed, ref:', swiperRef.current);
+                if (swiperRef.current) {
+                  console.log('Calling swipeLeft');
+                  swiperRef.current.swipeLeft();
+                }
+              }}
+            >
+              <Entypo name="cross" size={40} color="white" />
+            </Pressable>
+            
+            <Pressable 
+              style={({ pressed }) => [
+                styles.button,
+                styles.yumButton,
+                pressed && { opacity: 0.7 }
+              ]}
+              onPress={() => {
+                console.log('Yum button pressed, ref:', swiperRef.current);
+                if (swiperRef.current) {
+                  console.log('Calling swipeRight');
+                  swiperRef.current.swipeRight();
+                }
+              }}
+            >
+              <Entypo name="check" size={40} color="white" />
+            </Pressable>
+          </View>
         )}
       </View>
     </SafeAreaView>
@@ -92,13 +137,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  contentWrapper: {
+    flex: 1,
+  },
   swiperContainer: {
     flex: 1,
     // Provide some padding so cards don't hit the very edge
-    marginTop: -20, 
+    marginTop: -20,
   },
   card: {
-    flex: 0.75, // Take up 75% of the screen height
+    height: '85%', // Fixed height instead of flex
     borderRadius: 20,
     borderWidth: 2,
     borderColor: '#E8E8E8',
@@ -109,6 +157,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    marginHorizontal: 20,
   },
   cardImage: {
     width: '100%',
@@ -128,5 +177,32 @@ const styles = StyleSheet.create({
   cardAddress: {
     fontSize: 16,
     color: 'gray',
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    paddingVertical: 20,
+    paddingHorizontal: 40,
+    backgroundColor: '#F5FCFF',
+    zIndex: 100,
+  },
+  button: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  passButton: {
+    backgroundColor: '#FF4458',
+  },
+  yumButton: {
+    backgroundColor: '#4CAF50',
   },
 });
